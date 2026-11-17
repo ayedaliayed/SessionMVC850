@@ -9,8 +9,9 @@ namespace SessionMVC850.Controllers
         DepartmentBL departmentBL = new DepartmentBL();
         public IActionResult Index()
         {
-            //Ayed Comment1
-            //Ayed Comment2
+            //Moh comment1
+            //Moh comment2
+            //Moh comment3
             var departments = departmentBL.GetAll();
             return View(departments);
         }
