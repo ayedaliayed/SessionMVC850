@@ -5,7 +5,8 @@ namespace SessionMVC850.Context
 {
     public class CompanyContext:DbContext
     {
-
+          
+         
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
 
