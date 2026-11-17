@@ -1,0 +1,49 @@
+@model SessionMVC850.Models.Department
+
+@{
+    ViewData["Title"] = "Edit Department";
+}
+
+<h2>Edit Department</h2>
+
+<form action="/Department/SaveEdit" method="post">
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label for="Name">Department Name</label>
+        <input type="text"
+               id="Name"
+               name="Name"
+               class="form-control"
+               placeholder="Enter department name"
+               value="@Model?.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Code">Department Code</label>
+        <input type="text"
+               id="Code"
+               name="Code"
+               class="form-control"
+               placeholder="Enter department code"
+               value="@Model?.Code" />
+    </div>
+
+    <div class="mb-3">
+        <label for="MangerName">Manager Name</label>
+        <input type="text"
+               id="MangerName"
+               name="MangerName"
+               class="form-control"
+               placeholder="Enter manager name"
+               value="@Model?.MangerName" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save Changes
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+</form>

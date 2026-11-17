@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to Edit an Employee — Step by Step</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #eff6ff;
+    --ok: #047857;
+    --ok-soft: #ecfdf5;
+    --warn: #b45309;
+    --warn-soft: #fffbeb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f3f4f6;
+    color: var(--ink);
+    font: 16px/1.65 "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  .page {
+    max-width: 900px;
+    margin: 32px auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  h1 { font-size: 30px; margin: 0 0 6px; }
+  h2 {
+    font-size: 21px;
+    margin: 34px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 17px; margin: 22px 0 8px; }
+  p { margin: 8px 0; }
+  .lead { color: var(--muted); margin-bottom: 26px; }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 22px 58px;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps > li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 40px;
+    bottom: 2px;
+    width: 2px;
+    background: var(--line);
+  }
+  .steps strong { display: block; font-size: 17px; margin-bottom: 4px; }
+  code {
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: #b91c1c;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 15px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f9fafb; }
+  .box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+  }
+  .tip { background: var(--ok-soft); border-color: #a7f3d0; }
+  .warn { background: var(--warn-soft); border-color: #fde68a; }
+  .note { background: var(--accent-soft); border-color: #bfdbfe; }
+  .box b { display: block; margin-bottom: 4px; }
+  .figure { margin: 18px 0; text-align: center; }
+  .figure img {
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .figure figcaption {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .lang {
+    display: inline-block;
+    margin-top: 28px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lang:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    .page { margin: 12px; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>How to Edit an Employee — Step by Step</h1>
+  <p class="lead">SessionMVC850 · ASP.NET Core MVC · English guide</p>
+
+  <div class="box note">
+    <b>Before you start</b>
+    Make sure the project is built and running, the SQL Server database <code>Session850</code>
+    is available, and at least one employee exists in the <code>Employees</code> table.
+  </div>
+
+  <h2>The Steps</h2>
+
+  <ol class="steps">
+
+    <li>
+      <strong>Run the application</strong>
+      <p>Open the project in Visual Studio and press <code>F5</code>, or run this in a terminal
+      inside the project folder:</p>
+      <pre><code>dotnet run</code></pre>
+      <p>The application starts at <code>http://localhost:5090</code>.</p>
+    </li>
+
+    <li>
+      <strong>Open the employees list</strong>
+      <p>In the browser, go to:</p>
+      <pre><code>http://localhost:5090/Employee</code></pre>
+      <p>This is the Employee <em>Index</em> page. It shows all employees in a table.</p>
+    </li>
+
+    <li>
+      <strong>Click the <em>Edit</em> link</strong>
+      <p>Find the employee you want to change and click <strong>Edit</strong> in that row.
+      The browser opens:</p>
+      <pre><code>http://localhost:5090/Employee/Edit/{id}</code></pre>
+      <p>For example, employee number 3 opens <code>/Employee/Edit/3</code>.</p>
+
+      <figure class="figure">
+        <img src="images/employee-index.png"
+             alt="Employee list page with Edit links" />
+        <figcaption>The employees list — click <strong>Edit</strong> in the row you want to change.</figcaption>
+      </figure>
+    </li>
+
+    <li>
+      <strong>Check the pre-filled data</strong>
+      <p>The edit form already contains the employee's current values. The department
+      dropdown is automatically set to the employee's current department.</p>
+    </li>
+
+    <li>
+      <strong>Change the fields you need</strong>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>What to do</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Name</td><td>Type the new employee name.</td></tr>
+          <tr><td>Age</td><td>Type the new age (number only).</td></tr>
+          <tr><td>Image</td><td>Type the image path or file name (optional).</td></tr>
+          <tr><td>Phone</td><td>Type the new phone number.</td></tr>
+          <tr><td>Department</td><td>Choose the department from the dropdown list.</td></tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <b>Important</b>
+        The <strong>Name</strong> must not be empty. If it is empty, the form is shown again
+        and nothing is saved.
+      </div>
+
+      <figure class="figure">
+        <img src="images/employee-edit.png"
+             alt="Edit Employee form with Name, Age, Image, Phone and Department fields" />
+        <figcaption>The Edit Employee form with all fields, including the <strong>Department</strong> dropdown.</figcaption>
+      </figure>
+    </li>
+
+    <li>
+      <strong>Click <em>Save Changes</em></strong>
+      <p>The form is submitted to <code>POST /Employee/SaveEdit</code>. The employee record
+      is updated in the database, then you are redirected back to the employees list.</p>
+    </li>
+
+    <li>
+      <strong>Verify the result</strong>
+      <p>The employees list appears again. Find the employee and confirm that the new values
+      are displayed in the table.</p>
+      <div class="box tip">
+        <b>Success</b>
+        If you see the updated values in the list, the edit was saved successfully.
+      </div>
+    </li>
+
+    <li>
+      <strong>Optional: Cancel</strong>
+      <p>Click <strong>Cancel</strong> to return to the list without saving any changes.</p>
+    </li>
+
+  </ol>
+
+  <h2>How the Department Dropdown Is Filled — Step by Step</h2>
+  <p>On the edit page, the <strong>Department</strong> field is a dropdown
+  (<code>&lt;select&gt;</code>). Its items come from the <code>Departments</code> table in the
+  database. Here is exactly how it is built:</p>
+
+  <ol class="steps">
+
+    <li>
+      <strong>Controller: load all departments</strong>
+      <p>In <code>EmployeeController.Edit</code>, after loading the employee, get every
+      department and store the list in <code>ViewBag.Departments</code>:</p>
+      <pre><code>public IActionResult Edit(int id)
+{
+    var employee = EmployeeBL.GetById(id);
+    if (employee == null)
+    {
+        return NotFound();
+    }
+
+    ViewBag.Departments = DepartmentBL.GetAll();
+    return View(employee);
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>Service: read the departments from the database</strong>
+      <p><code>DepartmentBL.GetAll()</code> asks Entity Framework for all rows in the
+      <code>Departments</code> table:</p>
+      <pre><code>public List&lt;Department&gt; GetAll()
+{
+    return CompanyContext.Departments.ToList();
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>View: create the dropdown control</strong>
+      <p>In <code>Views/Employee/Edit.cshtml</code> the dropdown is a normal HTML
+      <code>&lt;select&gt;</code>. Its <code>name</code> must be <code>DeptId</code> so the
+      selected value binds to <code>Employee.DeptId</code>:</p>
+      <pre><code>&lt;div class="mb-3"&gt;
+    &lt;label for="DeptId"&gt;Department&lt;/label&gt;
+    &lt;select id="DeptId" name="DeptId" class="form-control"&gt;
+        ...
+    &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+    </li>
+
+    <li>
+      <strong>View: generate one option per department</strong>
+      <p>Loop over the list in <code>ViewBag.Departments</code> and print one
+      <code>&lt;option&gt;</code> for each department. The option value is the department
+      <code>Id</code> and the visible text is its <code>Name</code>:</p>
+      <pre><code>@foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+{
+    &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>View: preselect the employee's current department</strong>
+      <p>Compare each department id with <code>Model.DeptId</code>. When they match, add the
+      <code>selected</code> attribute so that department appears chosen when the page opens:</p>
+      <pre><code>@foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+{
+    if (department.Id == Model.DeptId)
+    {
+        &lt;option value="@department.Id" selected&gt;@department.Name&lt;/option&gt;
+    }
+    else
+    {
+        &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+    }
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>Submit: send the chosen department id to the server</strong>
+      <p>When the form is posted to <code>/Employee/SaveEdit</code>, the browser sends the
+      selected option's <code>value</code> as <code>DeptId</code>. MVC model binding puts it
+      into <code>employee.DeptId</code>.</p>
+    </li>
+
+    <li>
+      <strong>Save: store the new department</strong>
+      <p><code>EmployeeBL.Update</code> copies the value from the form and saves it to the
+      employee row:</p>
+      <pre><code>existing.DeptId = employee.DeptId;
+CompanyContext.SaveChanges();</code></pre>
+    </li>
+
+  </ol>
+
+  <div class="box tip">
+    <b>Result</b>
+    The dropdown lists every department by name. The employee's current department is
+    preselected, and the department you choose is saved with the employee.
+  </div>
+
+  <div class="box warn">
+    <b>If the dropdown is empty</b>
+    There are no rows in the <code>Departments</code> table. Add a department from the
+    Department pages first, then reload the edit page.
+
+    <figure class="figure">
+      <img src="images/department-add.png"
+           alt="Add Department form" />
+      <figcaption>Add a department first, then the dropdown will show it.</figcaption>
+    </figure>
+  </div>
+
+  <div class="box note">
+    <b>Also on validation errors</b>
+    <code>SaveEdit</code> loads the departments again before returning the form, so the
+    dropdown keeps working when a field is invalid:
+    <pre><code>ViewBag.Departments = DepartmentBL.GetAll();
+return View("Edit", employee);</code></pre>
+  </div>
+
+  <h2>What Happens Behind the Scenes</h2>
+  <ol>
+    <li>The browser sends <code>GET /Employee/Edit/{id}</code>.</li>
+    <li><code>EmployeeController.Edit</code> loads the employee with <code>EmployeeBL.GetById</code>
+        and puts the departments in <code>ViewBag.Departments</code>.</li>
+    <li><code>Views/Employee/Edit.cshtml</code> renders the form with the current values.</li>
+    <li>When you click <strong>Save Changes</strong>, the browser sends
+        <code>POST /Employee/SaveEdit</code>.</li>
+    <li><code>EmployeeController.SaveEdit</code> calls <code>EmployeeBL.Update</code>, which copies
+        the new values to the database row and calls <code>SaveChanges()</code>.</li>
+    <li>The controller returns <code>RedirectToAction("Index")</code>, so the list is shown again.</li>
+  </ol>
+
+  <h2>Project Files Involved</h2>
+  <table>
+    <thead>
+      <tr><th>File</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Controllers/EmployeeController.cs</code></td>
+        <td>Contains the <code>Edit</code> (GET) and <code>SaveEdit</code> (POST) actions.</td>
+      </tr>
+      <tr>
+        <td><code>Services/EmployeeBL.cs</code></td>
+        <td>Contains <code>GetById</code> (load one employee) and <code>Update</code> (save changes).</td>
+      </tr>
+      <tr>
+        <td><code>Views/Employee/Edit.cshtml</code></td>
+        <td>The edit form with the fields and the department dropdown.</td>
+      </tr>
+      <tr>
+        <td><code>Views/Employee/Index.cshtml</code></td>
+        <td>The list page that contains the <strong>Edit</strong> link.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Troubleshooting</h2>
+  <table>
+    <thead>
+      <tr><th>Problem</th><th>Solution</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>404 — page not found</td>
+        <td>Stop the app, rebuild it, and run it again. Make sure the <code>Edit</code> action
+        exists in <code>EmployeeController</code>.</td>
+      </tr>
+      <tr>
+        <td>The department dropdown is empty</td>
+        <td>Add at least one department first from the Department pages.</td>
+      </tr>
+      <tr>
+        <td>NullReferenceException on the employees list</td>
+        <td>The list action must pass the employees to the view:
+        <code>return View(EmployeeBL.GetAll());</code></td>
+      </tr>
+      <tr>
+        <td>Changes are not saved</td>
+        <td>Check that <strong>Name</strong> is not empty and that
+        <code>SaveChanges()</code> is called inside <code>EmployeeBL.Update</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <a class="lang" href="edit-employee-ar.html">← Read this guide in Arabic</a>
+  <a class="lang" href="edit-employee-form-en.html">Form styles: normal HTML, helpers, tag helpers</a>
+
+</div>
+</body>
+</html>

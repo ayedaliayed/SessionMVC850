@@ -1,0 +1,33 @@
+﻿@model SessionMVC850.Models.Department
+<h2>Add Department</h2>
+<form action="/Department/SaveAdd" method="post">
+
+    <div class="mb-3">
+        <label for="Name">Department Name</label>
+        <input type="text"
+               id="Name"
+               name="Name"
+               class="form-control"
+               placeholder="Enter department name"
+        @* value="@Model.Name" *@
+               value="@Model?.Name"
+        @* required *@ />
+    </div>
+
+    <div class="mb-3">
+        <label for="MangerName">Manager Name</label>
+        <input type="text"
+               id="MangerName"
+               name="MangerName"
+               class="form-control"
+               placeholder="Enter manager name"
+        @* value="@Model.MangerName" *@
+               value="@Model?.MangerName"
+        @* required *@ />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Add Department
+    </button>
+
+</form>

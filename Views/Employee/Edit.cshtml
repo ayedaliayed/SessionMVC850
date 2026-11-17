@@ -1,0 +1,129 @@
+@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+@* 
+@Html.TextBoxFor(e=>e.Name)
+@Html.TextBoxFor(e=>e.Phone)
+
+
+@Html.TextBox("Name")
+@Html.TextArea("Name") *@
+
+@* @ViewBag
+@ViewData
+@Model *@
+
+
+<h2>Edit Employee</h2>
+
+@* <form action="/Employee/SaveEdit" method="post"> *@
+<form asp-action="SaveEdit" asp-controller="Employee" method="post">
+
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="mb-3">
+        @* <label for="Name">Employee Name</label> *@
+        @* @Html.Label("Name", "Employee Name") *@
+        @Html.LabelFor(e=>e.Name)
+        @* <input type="text"
+               id="Name"
+               name="Name"
+               class="form-control"
+               placeholder="Enter employee name"
+               value="@Model.Name" /> *@
+
+        @* @Html.TextBox("Name") *@
+        @* @Html.TextBoxFor(e => e.Name) *@
+
+        @Html.EditorFor(e=>e.Name)
+
+    </div>
+
+    <div class="mb-3">
+        @* <label for="age">Age</label> *@
+        @* @Html.Label("age", "Employee age") *@
+
+        <label asp-for="Name"></label>
+        @* <input type="number"
+               id="age"
+               name="age"
+               class="form-control"
+               placeholder="Enter age"
+               value="@Model.age" /> *@
+
+               @Html.EditorFor(e=>e.age)
+    </div>
+
+    <div class="mb-3">
+        <label for="Image">Image</label>
+        <input type="text"
+               id="Image"
+               name="Image"
+               class="form-control"
+               placeholder="Enter image path"
+               value="@Model.Image" />
+    </div>
+
+    <div class="mb-3">
+        @* <label for="Phone">Phone</label> *@
+
+        @Html.LabelFor(e=>e.Phone)
+        @Html.TextBoxFor(e => e.Phone)
+
+        @* <input type="text"
+               id="Phone"
+               name="Phone"
+               class="form-control"
+               placeholder="Enter phone number"
+               value="@Model.Phone" /> *@
+    </div>
+
+    @* <div class="mb-3">
+        <label for="DeptId">Department</label>
+        <select id="DeptId" name="DeptId" class="form-control">
+            @foreach (var department in (IEnumerable<Department>)ViewBag.Departments)
+            {
+                <option value="@department.Id">@department.Name</option>
+
+
+                if (department.Id == Model.DeptId)
+                {
+                    <option value="@department.Id" selected>@department.Name</option>
+                }
+                else
+                {
+                    <option value="@department.Id">@department.Name</option>
+                }
+            }
+        </select>
+    </div> *@
+
+
+    <div class="mb-3">
+
+        <label asp-for="DeptId" class="form-label">Department</label>
+
+        <select asp-for="DeptId" class="form-control"
+                asp-items="@(new SelectList((IEnumerable<Department>)ViewBag.Departments, "Id", "Name"))">
+        </select>
+    </div>
+
+
+
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    
+    <a href="/Employee" class="btn btn-secondary">Cancel</a>
+
+
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>

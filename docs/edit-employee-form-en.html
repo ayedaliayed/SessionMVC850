@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Building the Edit Employee Form — 4 Ways</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #eff6ff;
+    --ok: #047857;
+    --ok-soft: #ecfdf5;
+    --warn: #b45309;
+    --warn-soft: #fffbeb;
+    --bad: #b91c1c;
+    --bad-soft: #fef2f2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f3f4f6;
+    color: var(--ink);
+    font: 16px/1.65 "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  .page {
+    max-width: 980px;
+    margin: 32px auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  h1 { font-size: 30px; margin: 0 0 6px; }
+  h2 {
+    font-size: 22px;
+    margin: 40px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 17px; margin: 22px 0 8px; }
+  p { margin: 8px 0; }
+  ul, ol { padding-inline-start: 22px; }
+  .lead { color: var(--muted); margin-bottom: 26px; }
+  code {
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: var(--bad);
+    direction: ltr;
+    display: inline-block;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    direction: ltr;
+    text-align: left;
+  }
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    display: inline;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 14.5px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f9fafb; }
+  .box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+  }
+  .box ul { margin: 6px 0 0; }
+  .tip { background: var(--ok-soft); border-color: #a7f3d0; }
+  .warn { background: var(--warn-soft); border-color: #fde68a; }
+  .note { background: var(--accent-soft); border-color: #bfdbfe; }
+  .bad { background: var(--bad-soft); border-color: #fecaca; }
+  .box b { display: block; margin-bottom: 4px; }
+  .figure { margin: 18px 0; text-align: center; }
+  .figure img {
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .figure figcaption {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .toc {
+    background: #f9fafb;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 20px 0;
+  }
+  .toc ol { margin: 6px 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .lang {
+    display: inline-block;
+    margin-top: 28px;
+    margin-inline-end: 18px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lang:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    .page { margin: 12px; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Building the Edit Employee Form — 4 Ways</h1>
+  <p class="lead">SessionMVC850 · ASP.NET Core MVC · English guide</p>
+
+  <div class="box note">
+    <b>What this guide covers</b>
+    The same <strong>Edit Employee</strong> page, written in four different styles:
+    normal HTML, loosely typed HTML helpers, strongly typed HTML helpers, and tag helpers
+    (<code>asp-for</code>, <code>asp-action</code>). For each style you will see the code,
+    what it produces, its benefits, and its problems.
+  </div>
+
+  <figure class="figure">
+    <img src="images/employee-edit.png"
+         alt="The Edit Employee form" />
+    <figcaption>All four approaches render the same visible form. The difference is only in the
+    <code>.cshtml</code> source code.</figcaption>
+  </figure>
+
+  <div class="toc">
+    <b>Contents</b>
+    <ol>
+      <li><a href="#normal">Normal HTML — start here</a></li>
+      <li><a href="#loose">Loosely typed HTML Helpers</a></li>
+      <li><a href="#strong">Strongly typed HTML Helpers</a></li>
+      <li><a href="#tag">Tag Helpers — <code>asp-for</code> and <code>asp-action</code></a></li>
+      <li><a href="#compare">Comparison: benefits and problems</a></li>
+      <li><a href="#mistakes">Problems in the current file</a></li>
+      <li><a href="#choose">Which one should you use?</a></li>
+    </ol>
+  </div>
+
+  <p>The form has five fields — <strong>Name</strong>, <strong>Age</strong>,
+  <strong>Image</strong>, <strong>Phone</strong>, <strong>Department</strong> — plus a hidden
+  <strong>Id</strong>. It posts to <code>/Employee/SaveEdit</code>, and the Cancel button goes
+  back to <code>/Employee</code>.</p>
+
+  <!-- ============================================================ -->
+  <h2 id="normal">1) Normal HTML — start here</h2>
+
+  <h3>How it works</h3>
+  <p>You write plain HTML. The only rule that matters for MVC is the <code>name</code>
+  attribute: it must match the model property so that model binding can fill
+  <code>Employee</code> when the form is posted.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+&lt;form action="/Employee/SaveEdit" method="post"&gt;
+    &lt;input type="hidden" name="Id" value="@Model.Id" /&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Name"&gt;Employee Name&lt;/label&gt;
+        &lt;input type="text" id="Name" name="Name" class="form-control"
+               placeholder="Enter employee name" value="@Model.Name" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="age"&gt;Age&lt;/label&gt;
+        &lt;input type="number" id="age" name="age" class="form-control"
+               placeholder="Enter age" value="@Model.age" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Image"&gt;Image&lt;/label&gt;
+        &lt;input type="text" id="Image" name="Image" class="form-control"
+               placeholder="Enter image path" value="@Model.Image" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Phone"&gt;Phone&lt;/label&gt;
+        &lt;input type="text" id="Phone" name="Phone" class="form-control"
+               placeholder="Enter phone number" value="@Model.Phone" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="DeptId"&gt;Department&lt;/label&gt;
+        &lt;select id="DeptId" name="DeptId" class="form-control"&gt;
+            @foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+            {
+                if (department.Id == Model.DeptId)
+                {
+                    &lt;option value="@department.Id" selected&gt;@department.Name&lt;/option&gt;
+                }
+                else
+                {
+                    &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+                }
+            }
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    &lt;a href="/Employee" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+&lt;/form&gt;</code></pre>
+
+  <h3>What gets generated</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali" /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>Benefits</b>
+    <ul>
+      <li>Easy to read and understand, especially for beginners.</li>
+      <li>Full control over every attribute and every pixel of markup.</li>
+      <li>No hidden magic — what you write is what the browser receives.</li>
+      <li>Works even if you later move away from ASP.NET Core MVC.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>Problems</b>
+    <ul>
+      <li><strong>Magic strings:</strong> <code>name="Name"</code> and <code>name="DeptId"</code>
+          are not checked by the compiler. A typo breaks model binding silently.</li>
+      <li><strong>Hard-coded URLs:</strong> <code>action="/Employee/SaveEdit"</code> breaks if the
+          route changes or the app runs under a path base.</li>
+      <li><strong>No automatic validation:</strong> you must write validation attributes and
+          messages yourself.</li>
+      <li><strong>Manual selected option:</strong> the <code>if/else</code> for
+          <code>selected</code> must be repeated for every dropdown.</li>
+      <li><strong>Duplication:</strong> every field repeats the same wrapper and class names.</li>
+      <li><strong>Refactoring is unsafe:</strong> renaming <code>Employee.Name</code> does not
+          update <code>name="Name"</code>.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="loose">2) Loosely typed HTML Helpers</h2>
+
+  <h3>How it works</h3>
+  <p>Instead of writing tags, you call helpers such as <code>Html.TextBox</code>,
+  <code>Html.Label</code>, <code>Html.DropDownList</code> and pass the property name as a
+  <strong>string</strong>. The helper generates the HTML for you.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+@using (Html.BeginForm("SaveEdit", "Employee", FormMethod.Post))
+{
+    @Html.Hidden("Id", Model.Id)
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Name", "Employee Name")
+        @Html.TextBox("Name", Model.Name, new { @class = "form-control", placeholder = "Enter employee name" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("age", "Age")
+        @Html.TextBox("age", Model.age, new { @class = "form-control", type = "number", placeholder = "Enter age" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Image", "Image")
+        @Html.TextBox("Image", Model.Image, new { @class = "form-control", placeholder = "Enter image path" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Phone", "Phone")
+        @Html.TextBox("Phone", Model.Phone, new { @class = "form-control", placeholder = "Enter phone number" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("DeptId", "Department")
+        @Html.DropDownList("DeptId",
+            new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments,
+                           "Id", "Name", Model.DeptId),
+            new { @class = "form-control" })
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    @Html.ActionLink("Cancel", "Index", "Employee", null, new { @class = "btn btn-secondary" })
+}</code></pre>
+
+  <div class="box note">
+    <b>Important details</b>
+    <code>Html.BeginForm("SaveEdit", "Employee", FormMethod.Post)</code> builds the form URL
+    from routing instead of hard-coding it. <code>SelectList</code> takes the data source,
+    the value field (<code>Id</code>), the text field (<code>Name</code>) and the selected
+    value (<code>Model.DeptId</code>).
+  </div>
+
+  <h3>What gets generated</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali" /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>Benefits</b>
+    <ul>
+      <li>Less markup than writing every tag by hand.</li>
+      <li>The helper generates a correct <code>id</code> and <code>name</code> from the string.</li>
+      <li><code>BeginForm</code> and <code>ActionLink</code> generate URLs from the route table.</li>
+      <li>Useful when the property name is <strong>dynamic</strong> (built at runtime) and cannot
+          be written as a lambda expression.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>Problems</b>
+    <ul>
+      <li><strong>Still magic strings:</strong> <code>"Name"</code> and <code>"DeptId"</code> are
+          not checked by the compiler or IntelliSense.</li>
+      <li><strong>Typos cause silent bugs:</strong> <code>Html.TextBox("Nmae", ...)</code> renders
+          an input that never binds to the model.</li>
+      <li><strong>Refactoring breaks:</strong> renaming a property does not update the string.</li>
+      <li><strong>No compile-time support</strong> for model changes; errors appear only at runtime.</li>
+      <li>Many overloads are confusing, and it is easy to pass arguments in the wrong order.</li>
+      <li>Validation attributes are not guaranteed; you must add validation messages manually.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="strong">3) Strongly typed HTML Helpers</h2>
+
+  <h3>How it works</h3>
+  <p>You pass a <strong>lambda expression</strong> (<code>m =&gt; m.Name</code>) instead of a
+  string. The compiler checks the property, IntelliSense helps you choose it, and renaming a
+  property updates the helper automatically.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+@using (Html.BeginForm("SaveEdit", "Employee", FormMethod.Post))
+{
+    @Html.HiddenFor(m =&gt; m.Id)
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Name, "Employee Name")
+        @Html.TextBoxFor(m =&gt; m.Name, new { @class = "form-control", placeholder = "Enter employee name" })
+        @Html.ValidationMessageFor(m =&gt; m.Name, "", new { @class = "text-danger" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.age, "Age")
+        @Html.TextBoxFor(m =&gt; m.age, new { @class = "form-control", type = "number", placeholder = "Enter age" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Image, "Image")
+        @Html.TextBoxFor(m =&gt; m.Image, new { @class = "form-control", placeholder = "Enter image path" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Phone, "Phone")
+        @Html.TextBoxFor(m =&gt; m.Phone, new { @class = "form-control", placeholder = "Enter phone number" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.DeptId, "Department")
+        @Html.DropDownListFor(m =&gt; m.DeptId,
+            new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments, "Id", "Name"),
+            new { @class = "form-control" })
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    @Html.ActionLink("Cancel", "Index", "Employee", null, new { @class = "btn btn-secondary" })
+}</code></pre>
+
+  <div class="box note">
+    <b>EditorFor instead of TextBoxFor</b>
+    You can replace <code>@Html.TextBoxFor(m =&gt; m.Name, ...)</code> with
+    <code>@Html.EditorFor(m =&gt; m.Name, new { htmlAttributes = new { @class = "form-control" } })</code>.
+    <code>EditorFor</code> chooses the editor from the property type and data annotations, but it
+    may add extra wrapper markup.
+  </div>
+
+  <h3>What gets generated</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali"
+       data-val="true" data-val-required="The Name field is required." /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>Benefits</b>
+    <ul>
+      <li><strong>Compile-time checking:</strong> a wrong property name is a build error, not a
+          silent runtime bug.</li>
+      <li><strong>IntelliSense</strong> lists the model properties as you type.</li>
+      <li><strong>Safe refactoring:</strong> renaming a property updates all <code>For</code>
+          helpers.</li>
+      <li>Uses model metadata (data annotations) to generate labels and validation attributes.</li>
+      <li><code>DropDownListFor</code> automatically selects the current <code>DeptId</code>.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>Problems</b>
+    <ul>
+      <li>More verbose syntax: every field needs a lambda expression.</li>
+      <li>You still write markup through method calls and anonymous objects, which can become
+          hard to read.</li>
+      <li>Less control over exact HTML than plain tags, and <code>EditorFor</code> can add
+          wrapper elements.</li>
+      <li><code>DropDownListFor</code> needs a <code>SelectList</code> and a
+          <code>ViewBag</code>/model property for the items.</li>
+      <li>Not ideal for very complex or highly custom layouts.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="tag">4) Tag Helpers — <code>asp-for</code> and <code>asp-action</code></h2>
+
+  <h3>How it works</h3>
+  <p>Tag helpers let you keep normal-looking HTML tags, then add <code>asp-*</code> attributes.
+  MVC processes them on the server and writes the correct HTML.</p>
+
+  <div class="box bad">
+    <b>Prerequisite</b>
+    Tag helpers must be registered. Make sure <code>Views/_ViewImports.cshtml</code> contains:
+    <pre><code>@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers</code></pre>
+  </div>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+&lt;form asp-controller="Employee" asp-action="SaveEdit" method="post"&gt;
+
+    &lt;input type="hidden" asp-for="Id" /&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Name" class="form-label"&gt;Employee Name&lt;/label&gt;
+        &lt;input asp-for="Name" class="form-control" placeholder="Enter employee name" /&gt;
+        &lt;span asp-validation-for="Name" class="text-danger"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="age" class="form-label"&gt;Age&lt;/label&gt;
+        &lt;input asp-for="age" class="form-control" type="number" placeholder="Enter age" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Image" class="form-label"&gt;Image&lt;/label&gt;
+        &lt;input asp-for="Image" class="form-control" placeholder="Enter image path" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Phone" class="form-label"&gt;Phone&lt;/label&gt;
+        &lt;input asp-for="Phone" class="form-control" placeholder="Enter phone number" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="DeptId" class="form-label"&gt;Department&lt;/label&gt;
+        &lt;select asp-for="DeptId" class="form-control"
+                asp-items="@(new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments, "Id", "Name"))"&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    &lt;a asp-controller="Employee" asp-action="Index" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+&lt;/form&gt;
+
+@section Scripts {
+    &lt;partial name="_ValidationScriptsPartial" /&gt;
+}</code></pre>
+
+  <h3>What each <code>asp-*</code> attribute does</h3>
+  <table>
+    <thead>
+      <tr><th>Attribute</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>asp-for</code></td>
+        <td>Strongly typed binding: generates <code>id</code>, <code>name</code>,
+        <code>value</code>, and validation attributes from the model property.</td>
+      </tr>
+      <tr>
+        <td><code>asp-validation-for</code></td>
+        <td>Shows the validation message for one property.</td>
+      </tr>
+      <tr>
+        <td><code>asp-action</code></td>
+        <td>Generates the URL of an action using routing (no hard-coded path).</td>
+      </tr>
+      <tr>
+        <td><code>asp-controller</code></td>
+        <td>Chooses the controller for <code>asp-action</code>. Optional when it is the current
+        controller.</td>
+      </tr>
+      <tr>
+        <td><code>asp-items</code></td>
+        <td>Fills a <code>&lt;select&gt;</code> with options from a
+        <code>SelectList</code>.</td>
+      </tr>
+      <tr>
+        <td><code>asp-route-id</code></td>
+        <td>Adds a route value (used on links, for example
+        <code>asp-action="Details" asp-route-id="@item.Id"</code>).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box tip">
+    <b>Why <code>asp-for</code> + <code>asp-items</code> is better than the manual dropdown</b>
+    <code>asp-for="DeptId"</code> automatically marks the option whose value equals
+    <code>Model.DeptId</code> as selected. You no longer need the <code>if/else</code> and the
+    <code>selected</code> attribute.
+  </div>
+
+  <h3>What gets generated</h3>
+  <pre><code>&lt;form action="/Employee/SaveEdit" method="post"&gt;
+...
+&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali"
+       data-val="true" data-val-required="The Name field is required." /&gt;
+...
+&lt;/form&gt;</code></pre>
+
+  <div class="box note">
+    <b>Client-side validation</b>
+    The example ends with a <code>@section Scripts</code> block that renders
+    <code>_ValidationScriptsPartial</code>. That partial loads jQuery validation, so
+    <code>asp-validation-for</code> shows messages in the browser without a page reload.
+  </div>
+
+  <div class="box tip">
+    <b>Benefits</b>
+    <ul>
+      <li><strong>Clean HTML:</strong> markup looks like normal HTML, so designers can read it.</li>
+      <li><strong>Strongly typed:</strong> <code>asp-for</code> is checked by the compiler and
+          IntelliSense.</li>
+      <li><strong>Safe URLs:</strong> <code>asp-action</code> and <code>asp-controller</code>
+          generate links from routing instead of hard-coded strings.</li>
+      <li><strong>Automatic selected option</strong> in dropdowns through
+          <code>asp-for</code> + <code>asp-items</code>.</li>
+      <li><strong>Automatic validation attributes</strong> and messages.</li>
+      <li>Less code than strongly typed helpers and easier to read.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>Problems</b>
+    <ul>
+      <li>Requires <code>@addTagHelper</code> registration; without it the
+          <code>asp-*</code> attributes are ignored and the form breaks silently.</li>
+      <li>The HTML looks static, so beginners may not realize the server is processing it.</li>
+      <li><code>asp-items</code> expects a <code>SelectList</code> /
+          <code>IEnumerable&lt;SelectListItem&gt;</code>, which needs an explicit cast with
+          <code>ViewBag</code>.</li>
+      <li>Some advanced scenarios still need HTML helpers (for example custom editor
+          templates).</li>
+      <li>You must run the app to see the generated HTML; the source alone is not the final
+          output.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="compare">5) Comparison: benefits and problems</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Normal HTML</th>
+        <th>Loose helpers</th>
+        <th>Strong helpers</th>
+        <th>Tag helpers</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Compile-time checking</td>
+        <td>No</td>
+        <td>No (strings)</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>IntelliSense for properties</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Safe refactoring</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Automatic <code>id</code> / <code>name</code></td>
+        <td>Manual</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>URL generation from routing</td>
+        <td>Manual</td>
+        <td><code>BeginForm</code> / <code>ActionLink</code></td>
+        <td><code>BeginForm</code> / <code>ActionLink</code></td>
+        <td><code>asp-action</code> / <code>asp-controller</code></td>
+      </tr>
+      <tr>
+        <td>Automatic validation attributes</td>
+        <td>Manual</td>
+        <td>Limited</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Automatic selected dropdown option</td>
+        <td>Manual <code>if/else</code></td>
+        <td>Pass selected value</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>Control over exact HTML</td>
+        <td>Full</td>
+        <td>Medium</td>
+        <td>Low–medium</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td>Verbosity</td>
+        <td>High</td>
+        <td>Medium</td>
+        <td>High</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td>Learning curve</td>
+        <td>Low</td>
+        <td>Medium</td>
+        <td>Medium</td>
+        <td>Low–medium</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box note">
+    <b>Summary</b>
+    Normal HTML is the easiest to learn but the least safe. Loosely typed helpers reduce markup
+    but still use unchecked strings. Strongly typed helpers are safe but verbose. Tag helpers
+    give you safe binding with the cleanest HTML.
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="mistakes">6) Problems in the current file</h2>
+
+  <p>The pasted <code>Edit.cshtml</code> mixes several approaches at once, which causes
+  duplicated fields and confusing behavior:</p>
+
+  <table>
+    <thead>
+      <tr><th>Problem</th><th>Why it is a problem</th><th>Fix</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@ViewData["Title"]</code> before <code>@model</code></td>
+        <td>Razor directives should start the file with <code>@model</code> first.</td>
+        <td>Put <code>@model SessionMVC850.Models.Employee</code> on line 1.</td>
+      </tr>
+      <tr>
+        <td><code>ViewData["Title"]</code> declared twice</td>
+        <td>Redundant and confusing.</td>
+        <td>Keep only one <code>@{
+    ViewData["Title"] = "Edit Employee";
+}</code> block.</td>
+      </tr>
+      <tr>
+        <td>Five controls all named <code>Name</code> / <code>Id="Name"</code></td>
+        <td><code>EditorFor</code>, <code>LabelFor</code>, <code>asp-for</code> label,
+        <code>TextBoxFor</code> and <code>TextBox("Name")</code> all render at once. Duplicate
+        <code>id</code> values are invalid and the posted value is unpredictable.</td>
+        <td>Choose one approach and keep one input per field.</td>
+      </tr>
+      <tr>
+        <td><code>Html.TextBox("Name", null, placeholder = "Enter age")</code></td>
+        <td>The name is <code>Name</code> but the placeholder says “age”; it also duplicates the
+        Name input.</td>
+        <td>Use <code>Html.TextBox("age", Model.age, ...)</code> or, better,
+        <code>&lt;input asp-for="age" ... /&gt;</code>.</td>
+      </tr>
+      <tr>
+        <td>Hard-coded <code>action="/Employee/SaveEdit"</code></td>
+        <td>Breaks if routing or the path base changes.</td>
+        <td>Use <code>asp-action="SaveEdit" asp-controller="Employee"</code> or
+        <code>Html.BeginForm</code>.</td>
+      </tr>
+      <tr>
+        <td>No validation messages</td>
+        <td>The user gets no feedback when a field is invalid.</td>
+        <td>Add <code>&lt;span asp-validation-for="Name"&gt;&lt;/span&gt;</code> or
+        <code>@Html.ValidationMessageFor(...)</code>.</td>
+      </tr>
+      <tr>
+        <td>Manual <code>selected</code> logic for the dropdown</td>
+        <td>Works, but it is repetitive and easy to forget.</td>
+        <td>Use <code>&lt;select asp-for="DeptId" asp-items="..."&gt;</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2 id="choose">7) Which one should you use?</h2>
+
+  <div class="box tip">
+    <b>Recommendation</b>
+    <ul>
+      <li><strong>Learn with normal HTML first</strong> — it teaches model binding and the
+          <code>name</code> attribute, which is the foundation of everything else.</li>
+      <li><strong>Use tag helpers for real forms</strong> — <code>asp-for</code>,
+          <code>asp-items</code>, <code>asp-action</code> and <code>asp-controller</code> give
+          you safety and clean markup.</li>
+      <li><strong>Use strongly typed helpers</strong> when you need a helper method, a custom
+          editor template, or code that is easier to generate dynamically.</li>
+      <li><strong>Use loosely typed helpers</strong> only when the property name is truly
+          dynamic; otherwise they are the weakest choice.</li>
+      <li><strong>Use normal HTML</strong> for static content, or when you need exact markup
+          that no helper can produce.</li>
+    </ul>
+  </div>
+
+  <p>To switch the project's page to the recommended version, replace the body of
+  <code>Views/Employee/Edit.cshtml</code> with the tag helper example from section 4.
+  The controller action and the <code>EmployeeBL.Update</code> method do not need any change:
+  they still receive the same <code>Employee</code> object.</p>
+
+  <a class="lang" href="edit-employee-form-ar.html">← Read this guide in Arabic</a>
+  <a class="lang" href="edit-employee-en.html">Step-by-step edit guide</a>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>كيفية تعديل بيانات موظف — خطوة بخطوة</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #eff6ff;
+    --ok: #047857;
+    --ok-soft: #ecfdf5;
+    --warn: #b45309;
+    --warn-soft: #fffbeb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f3f4f6;
+    color: var(--ink);
+    font: 16px/1.8 "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  .page {
+    max-width: 900px;
+    margin: 32px auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  h1 { font-size: 30px; margin: 0 0 6px; }
+  h2 {
+    font-size: 21px;
+    margin: 34px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  p { margin: 8px 0; }
+  .lead { color: var(--muted); margin-bottom: 26px; }
+
+  /* Steps with numbers on the right (RTL) */
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 58px 22px 0;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps > li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 18px;
+    left: auto;
+    top: 40px;
+    bottom: 2px;
+    width: 2px;
+    background: var(--line);
+  }
+  .steps strong { display: block; font-size: 17px; margin-bottom: 4px; }
+
+  code {
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: #b91c1c;
+    direction: ltr;
+    display: inline-block;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    direction: ltr;
+    text-align: left;
+  }
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    display: inline;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 15px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    text-align: right;
+    vertical-align: top;
+  }
+  th { background: #f9fafb; }
+  .box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+  }
+  .tip { background: var(--ok-soft); border-color: #a7f3d0; }
+  .warn { background: var(--warn-soft); border-color: #fde68a; }
+  .note { background: var(--accent-soft); border-color: #bfdbfe; }
+  .box b { display: block; margin-bottom: 4px; }
+  .figure { margin: 18px 0; text-align: center; }
+  .figure img {
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .figure figcaption {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .lang {
+    display: inline-block;
+    margin-top: 28px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lang:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    .page { margin: 12px; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>كيفية تعديل بيانات موظف — خطوة بخطوة</h1>
+  <p class="lead">SessionMVC850 · ASP.NET Core MVC · الدليل بالعربية</p>
+
+  <div class="box note">
+    <b>قبل أن تبدأ</b>
+    تأكد من بناء المشروع وتشغيله، ومن توفر قاعدة بيانات SQL Server باسم
+    <code>Session850</code>، ومن وجود موظف واحد على الأقل في جدول <code>Employees</code>.
+  </div>
+
+  <h2>الخطوات</h2>
+
+  <ol class="steps">
+
+    <li>
+      <strong>تشغيل التطبيق</strong>
+      <p>افتح المشروع في Visual Studio واضغط <code>F5</code>، أو نفّذ الأمر التالي
+      في Terminal داخل مجلد المشروع:</p>
+      <pre><code>dotnet run</code></pre>
+      <p>يبدأ التطبيق على العنوان <code>http://localhost:5090</code>.</p>
+    </li>
+
+    <li>
+      <strong>فتح قائمة الموظفين</strong>
+      <p>في المتصفح، انتقل إلى:</p>
+      <pre><code>http://localhost:5090/Employee</code></pre>
+      <p>هذه هي صفحة <em>Index</em> الخاصة بالموظفين، وتُظهر جميع الموظفين في جدول.</p>
+    </li>
+
+    <li>
+      <strong>الضغط على رابط التعديل (Edit)</strong>
+      <p>ابحث عن الموظف الذي تريد تعديله واضغط <strong>Edit</strong> في صفه.
+      يفتح المتصفح الرابط:</p>
+      <pre><code>http://localhost:5090/Employee/Edit/{id}</code></pre>
+      <p>مثال: الموظف رقم 3 يفتح الرابط <code>/Employee/Edit/3</code>.</p>
+
+      <figure class="figure">
+        <img src="images/employee-index.png"
+             alt="صفحة قائمة الموظفين مع روابط التعديل" />
+        <figcaption>قائمة الموظفين — اضغط <strong>Edit</strong> في الصف الذي تريد تعديله.</figcaption>
+      </figure>
+    </li>
+
+    <li>
+      <strong>التحقق من البيانات المعبأة مسبقًا</strong>
+      <p>يحتوي نموذج التعديل على القيم الحالية للموظف، وتُضبط قائمة الأقسام
+      المنسدلة تلقائيًا على قسم الموظف الحالي.</p>
+    </li>
+
+    <li>
+      <strong>تغيير الحقول المطلوبة</strong>
+      <table>
+        <thead>
+          <tr><th>الحقل</th><th>ما يجب فعله</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>الاسم (Name)</td><td>اكتب اسم الموظف الجديد.</td></tr>
+          <tr><td>العمر (Age)</td><td>اكتب العمر الجديد (أرقام فقط).</td></tr>
+          <tr><td>الصورة (Image)</td><td>اكتب مسار الصورة أو اسم الملف (اختياري).</td></tr>
+          <tr><td>الهاتف (Phone)</td><td>اكتب رقم الهاتف الجديد.</td></tr>
+          <tr><td>القسم (Department)</td><td>اختر القسم من القائمة المنسدلة.</td></tr>
+        </tbody>
+      </table>
+      <div class="box warn">
+        <b>مهم</b>
+        يجب ألا يكون حقل <strong>الاسم</strong> فارغًا. إذا كان فارغًا، يُعرض النموذج
+        مرة أخرى ولا يتم حفظ أي شيء.
+      </div>
+
+      <figure class="figure">
+        <img src="images/employee-edit.png"
+             alt="نموذج تعديل الموظف مع حقول الاسم والعمر والصورة والهاتف والقسم" />
+        <figcaption>نموذج تعديل الموظف مع جميع الحقول، بما فيها القائمة المنسدلة <strong>Department</strong>.</figcaption>
+      </figure>
+    </li>
+
+    <li>
+      <strong>الضغط على «حفظ التغييرات» (Save Changes)</strong>
+      <p>يُرسل النموذج إلى <code>POST /Employee/SaveEdit</code>. يتم تحديث سجل الموظف
+      في قاعدة البيانات، ثم تتم إعادة توجيهك إلى قائمة الموظفين.</p>
+    </li>
+
+    <li>
+      <strong>التحقق من النتيجة</strong>
+      <p>تظهر قائمة الموظفين مرة أخرى. ابحث عن الموظف وتأكد من ظهور القيم الجديدة
+      في الجدول.</p>
+      <div class="box tip">
+        <b>نجاح</b>
+        إذا رأيت القيم المحدثة في القائمة، فقد تم حفظ التعديل بنجاح.
+      </div>
+    </li>
+
+    <li>
+      <strong>اختياري: إلغاء (Cancel)</strong>
+      <p>اضغط <strong>Cancel</strong> للعودة إلى القائمة دون حفظ أي تغييرات.</p>
+    </li>
+
+  </ol>
+
+  <h2>كيفية عرض قائمة الأقسام للاختيار منها — خطوة بخطوة</h2>
+  <p>في صفحة التعديل، يكون حقل <strong>القسم</strong> قائمة منسدلة
+  (<code>&lt;select&gt;</code>)، وتأتي عناصرها من جدول <code>Departments</code> في قاعدة
+  البيانات. وإليك كيفية بنائها بالتفصيل:</p>
+
+  <ol class="steps">
+
+    <li>
+      <strong>المتحكم: تحميل جميع الأقسام</strong>
+      <p>داخل <code>EmployeeController.Edit</code>، وبعد تحميل الموظف، أحضر كل الأقسام
+      وخزّن القائمة في <code>ViewBag.Departments</code>:</p>
+      <pre><code>public IActionResult Edit(int id)
+{
+    var employee = EmployeeBL.GetById(id);
+    if (employee == null)
+    {
+        return NotFound();
+    }
+
+    ViewBag.Departments = DepartmentBL.GetAll();
+    return View(employee);
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>الخدمة: قراءة الأقسام من قاعدة البيانات</strong>
+      <p>تطلب <code>DepartmentBL.GetAll()</code> من Entity Framework جميع الصفوف في جدول
+      <code>Departments</code>:</p>
+      <pre><code>public List&lt;Department&gt; GetAll()
+{
+    return CompanyContext.Departments.ToList();
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>العرض: إنشاء عنصر القائمة المنسدلة</strong>
+      <p>في <code>Views/Employee/Edit.cshtml</code> تكون القائمة عنصر HTML عاديًا
+      <code>&lt;select&gt;</code>. ويجب أن يكون الاسم <code>name</code> مساويًا لـ
+      <code>DeptId</code> حتى ترتبط القيمة المختارة بخاصية <code>Employee.DeptId</code>:</p>
+      <pre><code>&lt;div class="mb-3"&gt;
+    &lt;label for="DeptId"&gt;Department&lt;/label&gt;
+    &lt;select id="DeptId" name="DeptId" class="form-control"&gt;
+        ...
+    &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+    </li>
+
+    <li>
+      <strong>العرض: توليد خيار option لكل قسم</strong>
+      <p>كرّر على القائمة الموجودة في <code>ViewBag.Departments</code> واطبع عنصر
+      <code>&lt;option&gt;</code> لكل قسم، حيث تكون القيمة هي <code>Id</code> والاسم الظاهر
+      هو <code>Name</code>:</p>
+      <pre><code>@foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+{
+    &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>العرض: تحديد قسم الموظف الحالي مسبقًا</strong>
+      <p>قارن رقم كل قسم مع <code>Model.DeptId</code>. وعند التطابق أضف الخاصية
+      <code>selected</code> ليظهر هذا القسم مختارًا عند فتح الصفحة:</p>
+      <pre><code>@foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+{
+    if (department.Id == Model.DeptId)
+    {
+        &lt;option value="@department.Id" selected&gt;@department.Name&lt;/option&gt;
+    }
+    else
+    {
+        &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+    }
+}</code></pre>
+    </li>
+
+    <li>
+      <strong>الإرسال: إرسال رقم القسم المختار إلى الخادم</strong>
+      <p>عند إرسال النموذج إلى <code>/Employee/SaveEdit</code>، يرسل المتصفح قيمة الخيار
+      المختار باسم <code>DeptId</code>، ويضعها MVC في <code>employee.DeptId</code>.</p>
+    </li>
+
+    <li>
+      <strong>الحفظ: تخزين القسم الجديد</strong>
+      <p>تقوم <code>EmployeeBL.Update</code> بنسخ القيمة القادمة من النموذج وحفظها في صف
+      الموظف:</p>
+      <pre><code>existing.DeptId = employee.DeptId;
+CompanyContext.SaveChanges();</code></pre>
+    </li>
+
+  </ol>
+
+  <div class="box tip">
+    <b>النتيجة</b>
+    تعرض القائمة جميع الأقسام بأسمائها، ويكون قسم الموظف الحالي محددًا مسبقًا، ويُحفظ القسم
+    الذي تختاره مع الموظف.
+  </div>
+
+  <div class="box warn">
+    <b>إذا كانت القائمة المنسدلة فارغة</b>
+    لا توجد صفوف في جدول <code>Departments</code>. أضف قسمًا من صفحات الأقسام أولًا،
+    ثم أعد تحميل صفحة التعديل.
+
+    <figure class="figure">
+      <img src="images/department-add.png"
+           alt="نموذج إضافة قسم" />
+      <figcaption>أضف قسمًا أولًا، وبعدها ستظهر الأقسام في القائمة المنسدلة.</figcaption>
+    </figure>
+  </div>
+
+  <div class="box note">
+    <b>أيضًا عند أخطاء التحقق</b>
+    يعيد <code>SaveEdit</code> تحميل الأقسام قبل عرض النموذج، لذا تبقى القائمة تعمل عند
+    وجود حقل غير صالح:
+    <pre><code>ViewBag.Departments = DepartmentBL.GetAll();
+return View("Edit", employee);</code></pre>
+  </div>
+
+  <h2>ماذا يحدث في الخلفية</h2>
+  <ol>
+    <li>يرسل المتصفح الطلب <code>GET /Employee/Edit/{id}</code>.</li>
+    <li>يقوم <code>EmployeeController.Edit</code> بتحميل الموظف عبر
+        <code>EmployeeBL.GetById</code> ويضع الأقسام في <code>ViewBag.Departments</code>.</li>
+    <li>يعرض ملف <code>Views/Employee/Edit.cshtml</code> النموذج بالقيم الحالية.</li>
+    <li>عند الضغط على <strong>Save Changes</strong> يرسل المتصفح الطلب
+        <code>POST /Employee/SaveEdit</code>.</li>
+    <li>يستدعي <code>EmployeeController.SaveEdit</code> الدالة <code>EmployeeBL.Update</code>
+        التي تنسخ القيم الجديدة إلى صف قاعدة البيانات وتستدعي <code>SaveChanges()</code>.</li>
+    <li>يعيد المتحكم <code>RedirectToAction("Index")</code>، فتظهر القائمة مرة أخرى.</li>
+  </ol>
+
+  <h2>ملفات المشروع المستخدمة</h2>
+  <table>
+    <thead>
+      <tr><th>الملف</th><th>الغرض</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Controllers/EmployeeController.cs</code></td>
+        <td>يحتوي على إجراءي <code>Edit</code> (GET) و <code>SaveEdit</code> (POST).</td>
+      </tr>
+      <tr>
+        <td><code>Services/EmployeeBL.cs</code></td>
+        <td>يحتوي على <code>GetById</code> (تحميل موظف واحد) و <code>Update</code> (حفظ التغييرات).</td>
+      </tr>
+      <tr>
+        <td><code>Views/Employee/Edit.cshtml</code></td>
+        <td>نموذج التعديل مع الحقول وقائمة الأقسام المنسدلة.</td>
+      </tr>
+      <tr>
+        <td><code>Views/Employee/Index.cshtml</code></td>
+        <td>صفحة القائمة التي تحتوي على رابط <strong>Edit</strong>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>حل المشكلات</h2>
+  <table>
+    <thead>
+      <tr><th>المشكلة</th><th>الحل</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>خطأ 404 — الصفحة غير موجودة</td>
+        <td>أوقف التطبيق ثم أعد بناءه وشغّله مرة أخرى. تأكد من وجود إجراء
+        <code>Edit</code> داخل <code>EmployeeController</code>.</td>
+      </tr>
+      <tr>
+        <td>قائمة الأقسام فارغة</td>
+        <td>أضف قسمًا واحدًا على الأقل أولًا من صفحات الأقسام.</td>
+      </tr>
+      <tr>
+        <td>NullReferenceException في قائمة الموظفين</td>
+        <td>يجب أن يمرر إجراء القائمة الموظفين إلى العرض:
+        <code>return View(EmployeeBL.GetAll());</code></td>
+      </tr>
+      <tr>
+        <td>لا يتم حفظ التغييرات</td>
+        <td>تأكد أن حقل <strong>الاسم</strong> ليس فارغًا وأن <code>SaveChanges()</code>
+        تُستدعى داخل <code>EmployeeBL.Update</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <a class="lang" href="edit-employee-en.html">اقرأ هذا الدليل بالإنجليزية ←</a>
+  <a class="lang" href="edit-employee-form-ar.html">أنواع كتابة النماذج: HTML العادي والمساعدات ومساعدات الوسوم</a>
+
+</div>
+</body>
+</html>

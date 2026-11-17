@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+
+    <div style="background-color:gainsboro">Header
+
+        @RenderSection("HeaderSection",false)
+    </div>
+    <div style="background:red">
+        @RenderBody()
+    </div>
+
+    <div style="background-color:bisque">Fooder
+        @RenderSection("FooterSection",false)
+    </div>
+
+</body>
+</html>

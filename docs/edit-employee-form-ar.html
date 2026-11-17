@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>بناء نموذج تعديل الموظف — 4 طرق</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --accent: #2563eb;
+    --accent-soft: #eff6ff;
+    --ok: #047857;
+    --ok-soft: #ecfdf5;
+    --warn: #b45309;
+    --warn-soft: #fffbeb;
+    --bad: #b91c1c;
+    --bad-soft: #fef2f2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f3f4f6;
+    color: var(--ink);
+    font: 16px/1.8 "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  .page {
+    max-width: 980px;
+    margin: 32px auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 44px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  h1 { font-size: 30px; margin: 0 0 6px; }
+  h2 {
+    font-size: 22px;
+    margin: 40px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 17px; margin: 22px 0 8px; }
+  p { margin: 8px 0; }
+  ul, ol { padding-inline-start: 22px; }
+  .lead { color: var(--muted); margin-bottom: 26px; }
+  code {
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: var(--bad);
+    direction: ltr;
+    display: inline-block;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    direction: ltr;
+    text-align: left;
+  }
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    display: inline;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 14.5px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    text-align: right;
+    vertical-align: top;
+  }
+  th { background: #f9fafb; }
+  .box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+  }
+  .box ul { margin: 6px 0 0; }
+  .tip { background: var(--ok-soft); border-color: #a7f3d0; }
+  .warn { background: var(--warn-soft); border-color: #fde68a; }
+  .note { background: var(--accent-soft); border-color: #bfdbfe; }
+  .bad { background: var(--bad-soft); border-color: #fecaca; }
+  .box b { display: block; margin-bottom: 4px; }
+  .figure { margin: 18px 0; text-align: center; }
+  .figure img {
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .figure figcaption {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .toc {
+    background: #f9fafb;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 20px 0;
+  }
+  .toc ol { margin: 6px 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .lang {
+    display: inline-block;
+    margin-top: 28px;
+    margin-inline-end: 18px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lang:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    .page { margin: 12px; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>بناء نموذج تعديل الموظف — 4 طرق</h1>
+  <p class="lead">SessionMVC850 · ASP.NET Core MVC · الدليل بالعربية</p>
+
+  <div class="box note">
+    <b>ماذا يغطي هذا الدليل</b>
+    نفس صفحة <strong>تعديل الموظف</strong>، مكتوبة بأربع طرق مختلفة:
+    HTML العادي، ومساعدات HTML غير المقيّدة بالنوع، ومساعدات HTML المقيّدة بالنوع،
+    ومساعدات الوسوم (<code>asp-for</code> و <code>asp-action</code>). لكل طريقة سترى
+    الكود، وما الذي تنتجه، ومزاياها، ومشاكلها.
+  </div>
+
+  <figure class="figure">
+    <img src="images/employee-edit.png"
+         alt="نموذج تعديل الموظف" />
+    <figcaption>الطرق الأربع تعرض نفس النموذج المرئي. الفرق فقط في كود المصدر
+    <code>.cshtml</code>.</figcaption>
+  </figure>
+
+  <div class="toc">
+    <b>المحتويات</b>
+    <ol>
+      <li><a href="#normal">HTML العادي — ابدأ من هنا</a></li>
+      <li><a href="#loose">مساعدات HTML غير المقيّدة بالنوع</a></li>
+      <li><a href="#strong">مساعدات HTML المقيّدة بالنوع</a></li>
+      <li><a href="#tag">مساعدات الوسوم — <code>asp-for</code> و <code>asp-action</code></a></li>
+      <li><a href="#compare">المقارنة: المزايا والمشاكل</a></li>
+      <li><a href="#mistakes">مشاكل الملف الحالي</a></li>
+      <li><a href="#choose">أي نوع تختار؟</a></li>
+    </ol>
+  </div>
+
+  <p>يحتوي النموذج على خمسة حقول — <strong>الاسم</strong> (Name)،
+  <strong>العمر</strong> (Age)، <strong>الصورة</strong> (Image)،
+  <strong>الهاتف</strong> (Phone)، <strong>القسم</strong> (Department) — بالإضافة إلى
+  <strong>Id</strong> مخفي. يرسل النموذج إلى <code>/Employee/SaveEdit</code>، ويعود زر
+  الإلغاء إلى <code>/Employee</code>.</p>
+
+  <!-- ============================================================ -->
+  <h2 id="normal">1) HTML العادي — ابدأ من هنا</h2>
+
+  <h3>كيف يعمل</h3>
+  <p>تكتب HTML عاديًا. القاعدة الوحيدة المهمة في MVC هي الخاصية <code>name</code>: يجب أن
+  تطابق اسم خاصية الموديل حتى يتمكن Model Binding من تعبئة <code>Employee</code> عند إرسال
+  النموذج.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+&lt;form action="/Employee/SaveEdit" method="post"&gt;
+    &lt;input type="hidden" name="Id" value="@Model.Id" /&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Name"&gt;Employee Name&lt;/label&gt;
+        &lt;input type="text" id="Name" name="Name" class="form-control"
+               placeholder="Enter employee name" value="@Model.Name" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="age"&gt;Age&lt;/label&gt;
+        &lt;input type="number" id="age" name="age" class="form-control"
+               placeholder="Enter age" value="@Model.age" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Image"&gt;Image&lt;/label&gt;
+        &lt;input type="text" id="Image" name="Image" class="form-control"
+               placeholder="Enter image path" value="@Model.Image" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="Phone"&gt;Phone&lt;/label&gt;
+        &lt;input type="text" id="Phone" name="Phone" class="form-control"
+               placeholder="Enter phone number" value="@Model.Phone" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label for="DeptId"&gt;Department&lt;/label&gt;
+        &lt;select id="DeptId" name="DeptId" class="form-control"&gt;
+            @foreach (var department in (IEnumerable&lt;Department&gt;)ViewBag.Departments)
+            {
+                if (department.Id == Model.DeptId)
+                {
+                    &lt;option value="@department.Id" selected&gt;@department.Name&lt;/option&gt;
+                }
+                else
+                {
+                    &lt;option value="@department.Id"&gt;@department.Name&lt;/option&gt;
+                }
+            }
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    &lt;a href="/Employee" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+&lt;/form&gt;</code></pre>
+
+  <h3>ما يتم توليده</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali" /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>المزايا</b>
+    <ul>
+      <li>سهولة القراءة والفهم، خاصة للمبتدئين.</li>
+      <li>تحكم كامل في كل خاصية وكل جزء من الوسم.</li>
+      <li>لا يوجد سحر خفي — ما تكتبه هو ما يستقبله المتصفح.</li>
+      <li>يعمل حتى لو انتقلت لاحقًا بعيدًا عن ASP.NET Core MVC.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>المشاكل</b>
+    <ul>
+      <li><strong>نصوص سحرية (Magic strings):</strong> <code>name="Name"</code> و
+          <code>name="DeptId"</code> لا يتحقق منها المترجم. أي خطأ إملائي يفسد الربط بصمت.</li>
+      <li><strong>روابط ثابتة:</strong> <code>action="/Employee/SaveEdit"</code> تتعطل إذا
+          تغيّر المسار أو عمل التطبيق تحت path base.</li>
+      <li><strong>لا يوجد تحقق تلقائي:</strong> يجب كتابة خصائص التحقق ورسائله بنفسك.</li>
+      <li><strong>تحديد الخيار المختار يدويًا:</strong> يجب تكرار <code>if/else</code>
+          للخاصية <code>selected</code> مع كل قائمة منسدلة.</li>
+      <li><strong>التكرار:</strong> كل حقل يكرر نفس الحاوية وأسماء الفئات.</li>
+      <li><strong>إعادة الهيكلة غير آمنة:</strong> تغيير اسم <code>Employee.Name</code>
+          لا يحدّث <code>name="Name"</code>.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="loose">2) مساعدات HTML غير المقيّدة بالنوع</h2>
+
+  <h3>كيف تعمل</h3>
+  <p>بدلًا من كتابة الوسوم، تستدعي مساعدات مثل <code>Html.TextBox</code> و
+  <code>Html.Label</code> و <code>Html.DropDownList</code> وتمرر اسم الخاصية
+  <strong>كنص</strong> (string). المساعد يولّد HTML نيابة عنك.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+@using (Html.BeginForm("SaveEdit", "Employee", FormMethod.Post))
+{
+    @Html.Hidden("Id", Model.Id)
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Name", "Employee Name")
+        @Html.TextBox("Name", Model.Name, new { @class = "form-control", placeholder = "Enter employee name" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("age", "Age")
+        @Html.TextBox("age", Model.age, new { @class = "form-control", type = "number", placeholder = "Enter age" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Image", "Image")
+        @Html.TextBox("Image", Model.Image, new { @class = "form-control", placeholder = "Enter image path" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("Phone", "Phone")
+        @Html.TextBox("Phone", Model.Phone, new { @class = "form-control", placeholder = "Enter phone number" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.Label("DeptId", "Department")
+        @Html.DropDownList("DeptId",
+            new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments,
+                           "Id", "Name", Model.DeptId),
+            new { @class = "form-control" })
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    @Html.ActionLink("Cancel", "Index", "Employee", null, new { @class = "btn btn-secondary" })
+}</code></pre>
+
+  <div class="box note">
+    <b>تفاصيل مهمة</b>
+    <code>Html.BeginForm("SaveEdit", "Employee", FormMethod.Post)</code> يبني رابط النموذج
+    من التوجيه بدل كتابته ثابتًا. و<code>SelectList</code> يأخذ مصدر البيانات، وحقل القيمة
+    (<code>Id</code>)، وحقل النص (<code>Name</code>)، والقيمة المحددة
+    (<code>Model.DeptId</code>).
+  </div>
+
+  <h3>ما يتم توليده</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali" /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>المزايا</b>
+    <ul>
+      <li>ترميز أقل من كتابة كل وسم يدويًا.</li>
+      <li>المساعد يولّد <code>id</code> و <code>name</code> صحيحين من النص.</li>
+      <li><code>BeginForm</code> و <code>ActionLink</code> يولّدان الروابط من جدول التوجيه.</li>
+      <li>مفيد عندما يكون اسم الخاصية <strong>ديناميكيًا</strong> (يُبنى وقت التشغيل) ولا
+          يمكن كتابته كتعبير lambda.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>المشاكل</b>
+    <ul>
+      <li><strong>لا تزال نصوصًا سحرية:</strong> <code>"Name"</code> و <code>"DeptId"</code>
+          لا يتحقق منها المترجم ولا IntelliSense.</li>
+      <li><strong>الأخطاء الإملائية تسبب أخطاء صامتة:</strong>
+          <code>Html.TextBox("Nmae", ...)</code> ينتج حقلًا لا يرتبط بالموديل أبدًا.</li>
+      <li><strong>إعادة الهيكلة تتعطل:</strong> تغيير اسم الخاصية لا يحدّث النص.</li>
+      <li><strong>لا يوجد دعم وقت الترجمة</strong> لتغيرات الموديل؛ الأخطاء تظهر وقت التشغيل
+          فقط.</li>
+      <li>كثير من التحميلات (overloads) مربكة، ويسهل تمرير الوسائط بترتيب خاطئ.</li>
+      <li>خصائص التحقق غير مضمونة؛ يجب إضافة رسائل التحقق يدويًا.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="strong">3) مساعدات HTML المقيّدة بالنوع</h2>
+
+  <h3>كيف تعمل</h3>
+  <p>تمرر <strong>تعبير lambda</strong> (<code>m =&gt; m.Name</code>) بدلًا من نص. يتحقق
+  المترجم من الخاصية، ويساعدك IntelliSense في اختيارها، وتغيير اسم الخاصية يحدّث المساعد
+  تلقائيًا.</p>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+@using (Html.BeginForm("SaveEdit", "Employee", FormMethod.Post))
+{
+    @Html.HiddenFor(m =&gt; m.Id)
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Name, "Employee Name")
+        @Html.TextBoxFor(m =&gt; m.Name, new { @class = "form-control", placeholder = "Enter employee name" })
+        @Html.ValidationMessageFor(m =&gt; m.Name, "", new { @class = "text-danger" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.age, "Age")
+        @Html.TextBoxFor(m =&gt; m.age, new { @class = "form-control", type = "number", placeholder = "Enter age" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Image, "Image")
+        @Html.TextBoxFor(m =&gt; m.Image, new { @class = "form-control", placeholder = "Enter image path" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.Phone, "Phone")
+        @Html.TextBoxFor(m =&gt; m.Phone, new { @class = "form-control", placeholder = "Enter phone number" })
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        @Html.LabelFor(m =&gt; m.DeptId, "Department")
+        @Html.DropDownListFor(m =&gt; m.DeptId,
+            new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments, "Id", "Name"),
+            new { @class = "form-control" })
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    @Html.ActionLink("Cancel", "Index", "Employee", null, new { @class = "btn btn-secondary" })
+}</code></pre>
+
+  <div class="box note">
+    <b>EditorFor بدلًا من TextBoxFor</b>
+    يمكنك استبدال <code>@Html.TextBoxFor(m =&gt; m.Name, ...)</code> بـ
+    <code>@Html.EditorFor(m =&gt; m.Name, new { htmlAttributes = new { @class = "form-control" } })</code>.
+    يختار <code>EditorFor</code> المحرر بناءً على نوع الخاصية و DataAnnotations، لكنه قد يضيف
+    وسوم حاوية إضافية.
+  </div>
+
+  <h3>ما يتم توليده</h3>
+  <pre><code>&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali"
+       data-val="true" data-val-required="The Name field is required." /&gt;</code></pre>
+
+  <div class="box tip">
+    <b>المزايا</b>
+    <ul>
+      <li><strong>التحقق وقت الترجمة:</strong> اسم خاصية خاطئ يصبح خطأ بناء وليس خطأ وقت
+          تشغيل صامتًا.</li>
+      <li><strong>IntelliSense</strong> يعرض خصائص الموديل أثناء الكتابة.</li>
+      <li><strong>إعادة هيكلة آمنة:</strong> تغيير اسم الخاصية يحدّث كل مساعدات
+          <code>For</code>.</li>
+      <li>يستخدم بيانات الموديل (DataAnnotations) لتوليد التسميات وخصائص التحقق.</li>
+      <li><code>DropDownListFor</code> يحدد <code>DeptId</code> الحالي تلقائيًا.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>المشاكل</b>
+    <ul>
+      <li>صيغة أكثر إسهابًا: كل حقل يحتاج تعبير lambda.</li>
+      <li>ما زلت تكتب الوسوم عبر استدعاءات دوال وكائنات مجهولة، وقد يصبح الكود صعب
+          القراءة.</li>
+      <li>تحكم أقل في HTML الدقيق مقارنة بالوسوم العادية، و<code>EditorFor</code> قد يضيف
+          عناصر حاوية.</li>
+      <li><code>DropDownListFor</code> يحتاج <code>SelectList</code> وخاصية
+          <code>ViewBag</code> أو موديل لعناصر القائمة.</li>
+      <li>ليس مثاليًا للتخطيطات المعقدة أو المخصصة جدًا.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="tag">4) مساعدات الوسوم — <code>asp-for</code> و <code>asp-action</code></h2>
+
+  <h3>كيف تعمل</h3>
+  <p>تسمح لك مساعدات الوسوم بالاحتفاظ بوسوم HTML عادية، ثم تضيف خصائص
+  <code>asp-*</code>. يعالجها MVC على الخادم ويكتب HTML الصحيح.</p>
+
+  <div class="box bad">
+    <b>شرط أساسي</b>
+    يجب تسجيل مساعدات الوسوم. تأكد أن <code>Views/_ViewImports.cshtml</code> يحتوي:
+    <pre><code>@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers</code></pre>
+  </div>
+
+  <pre><code>@model SessionMVC850.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+&lt;h2&gt;Edit Employee&lt;/h2&gt;
+
+&lt;form asp-controller="Employee" asp-action="SaveEdit" method="post"&gt;
+
+    &lt;input type="hidden" asp-for="Id" /&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Name" class="form-label"&gt;Employee Name&lt;/label&gt;
+        &lt;input asp-for="Name" class="form-control" placeholder="Enter employee name" /&gt;
+        &lt;span asp-validation-for="Name" class="text-danger"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="age" class="form-label"&gt;Age&lt;/label&gt;
+        &lt;input asp-for="age" class="form-control" type="number" placeholder="Enter age" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Image" class="form-label"&gt;Image&lt;/label&gt;
+        &lt;input asp-for="Image" class="form-control" placeholder="Enter image path" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="Phone" class="form-label"&gt;Phone&lt;/label&gt;
+        &lt;input asp-for="Phone" class="form-control" placeholder="Enter phone number" /&gt;
+    &lt;/div&gt;
+
+    &lt;div class="mb-3"&gt;
+        &lt;label asp-for="DeptId" class="form-label"&gt;Department&lt;/label&gt;
+        &lt;select asp-for="DeptId" class="form-control"
+                asp-items="@(new SelectList((IEnumerable&lt;Department&gt;)ViewBag.Departments, "Id", "Name"))"&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;button type="submit" class="btn btn-primary"&gt;Save Changes&lt;/button&gt;
+    &lt;a asp-controller="Employee" asp-action="Index" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+&lt;/form&gt;
+
+@section Scripts {
+    &lt;partial name="_ValidationScriptsPartial" /&gt;
+}</code></pre>
+
+  <h3>ماذا تفعل كل خاصية <code>asp-*</code>؟</h3>
+  <table>
+    <thead>
+      <tr><th>الخاصية</th><th>الغرض</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>asp-for</code></td>
+        <td>ربط مقيّد بالنوع: يولّد <code>id</code> و <code>name</code> و
+        <code>value</code> وخصائص التحقق من خاصية الموديل.</td>
+      </tr>
+      <tr>
+        <td><code>asp-validation-for</code></td>
+        <td>يعرض رسالة التحقق لخاصية واحدة.</td>
+      </tr>
+      <tr>
+        <td><code>asp-action</code></td>
+        <td>يولّد رابط إجراء باستخدام التوجيه (بدون مسار ثابت).</td>
+      </tr>
+      <tr>
+        <td><code>asp-controller</code></td>
+        <td>يختار المتحكم لـ <code>asp-action</code>. اختياري عندما يكون هو المتحكم
+        الحالي.</td>
+      </tr>
+      <tr>
+        <td><code>asp-items</code></td>
+        <td>يملأ <code>&lt;select&gt;</code> بخيارات من <code>SelectList</code>.</td>
+      </tr>
+      <tr>
+        <td><code>asp-route-id</code></td>
+        <td>يضيف قيمة مسار (تُستخدم في الروابط، مثل
+        <code>asp-action="Details" asp-route-id="@item.Id"</code>).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box tip">
+    <b>لماذا <code>asp-for</code> + <code>asp-items</code> أفضل من القائمة اليدوية؟</b>
+    <code>asp-for="DeptId"</code> يحدد تلقائيًا الخيار الذي تساوي قيمته
+    <code>Model.DeptId</code> كمختار. لم تعد بحاجة إلى <code>if/else</code> والخاصية
+    <code>selected</code>.
+  </div>
+
+  <h3>ما يتم توليده</h3>
+  <pre><code>&lt;form action="/Employee/SaveEdit" method="post"&gt;
+...
+&lt;input type="text" id="Name" name="Name" class="form-control"
+       placeholder="Enter employee name" value="ali"
+       data-val="true" data-val-required="The Name field is required." /&gt;
+...
+&lt;/form&gt;</code></pre>
+
+  <div class="box note">
+    <b>التحقق في المتصفح</b>
+    ينتهي المثال بكتلة <code>@section Scripts</code> تعرض
+    <code>_ValidationScriptsPartial</code>. يحمّل هذا الجزء مكتبة jQuery Validation، لذا
+    تعرض <code>asp-validation-for</code> الرسائل في المتصفح دون إعادة تحميل الصفحة.
+  </div>
+
+  <div class="box tip">
+    <b>المزايا</b>
+    <ul>
+      <li><strong>HTML نظيف:</strong> يبدو كوسوم HTML عادية، لذا يستطيع المصممون قراءته.</li>
+      <li><strong>مقيّد بالنوع:</strong> <code>asp-for</code> يتحقق منه المترجم و
+          IntelliSense.</li>
+      <li><strong>روابط آمنة:</strong> <code>asp-action</code> و <code>asp-controller</code>
+          يولّدان الروابط من التوجيه بدل النصوص الثابتة.</li>
+      <li><strong>تحديد تلقائي للخيار المختار</strong> في القوائم عبر
+          <code>asp-for</code> + <code>asp-items</code>.</li>
+      <li><strong>خصائص التحقق ورسائله تلقائية.</strong></li>
+      <li>كود أقل من المساعدات المقيّدة بالنوع وأسهل قراءة.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <b>المشاكل</b>
+    <ul>
+      <li>يتطلب تسجيل <code>@addTagHelper</code>؛ بدونه تُتجاهل خصائص
+          <code>asp-*</code> ويتعطل النموذج بصمت.</li>
+      <li>تبدو HTML ثابتة، لذا قد لا يدرك المبتدئ أن الخادم يعالجها.</li>
+      <li><code>asp-items</code> يتوقع <code>SelectList</code> /
+          <code>IEnumerable&lt;SelectListItem&gt;</code>، ما يحتاج تحويلًا صريحًا مع
+          <code>ViewBag</code>.</li>
+      <li>بعض السيناريوهات المتقدمة ما زالت تحتاج مساعدات HTML (مثل قوالب المحرر
+          المخصصة).</li>
+      <li>يجب تشغيل التطبيق لرؤية HTML الناتج؛ المصدر وحده ليس الناتج النهائي.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="compare">5) المقارنة: المزايا والمشاكل</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الميزة</th>
+        <th>HTML العادي</th>
+        <th>مساعدات غير مقيّدة</th>
+        <th>مساعدات مقيّدة</th>
+        <th>مساعدات الوسوم</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>التحقق وقت الترجمة</td>
+        <td>لا</td>
+        <td>لا (نصوص)</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>IntelliSense للخصائص</td>
+        <td>لا</td>
+        <td>لا</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>إعادة هيكلة آمنة</td>
+        <td>لا</td>
+        <td>لا</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>توليد <code>id</code> / <code>name</code> تلقائيًا</td>
+        <td>يدوي</td>
+        <td>نعم</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>توليد الروابط من التوجيه</td>
+        <td>يدوي</td>
+        <td><code>BeginForm</code> / <code>ActionLink</code></td>
+        <td><code>BeginForm</code> / <code>ActionLink</code></td>
+        <td><code>asp-action</code> / <code>asp-controller</code></td>
+      </tr>
+      <tr>
+        <td>خصائص التحقق التلقائية</td>
+        <td>يدوي</td>
+        <td>محدود</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>تحديد الخيار المختار تلقائيًا</td>
+        <td>يدوي <code>if/else</code></td>
+        <td>تمرير القيمة المحددة</td>
+        <td>نعم</td>
+        <td>نعم</td>
+      </tr>
+      <tr>
+        <td>التحكم في HTML الدقيق</td>
+        <td>كامل</td>
+        <td>متوسط</td>
+        <td>منخفض–متوسط</td>
+        <td>عالٍ</td>
+      </tr>
+      <tr>
+        <td>الإسهاب</td>
+        <td>عالٍ</td>
+        <td>متوسط</td>
+        <td>عالٍ</td>
+        <td>منخفض</td>
+      </tr>
+      <tr>
+        <td>منحنى التعلم</td>
+        <td>منخفض</td>
+        <td>متوسط</td>
+        <td>متوسط</td>
+        <td>منخفض–متوسط</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box note">
+    <b>الخلاصة</b>
+    HTML العادي أسهل للتعلم لكنه الأقل أمانًا. المساعدات غير المقيّدة تقلل الترميز لكنها
+    تستخدم نصوصًا غير مُتحقَّق منها. المساعدات المقيّدة آمنة لكنها مطوّلة. مساعدات الوسوم
+    تمنحك ربطًا آمنًا مع أنظف HTML.
+  </div>
+
+  <!-- ============================================================ -->
+  <h2 id="mistakes">6) مشاكل الملف الحالي</h2>
+
+  <p>ملف <code>Edit.cshtml</code> الذي أرفقته يخلط عدة طرق معًا، ما يسبب حقولًا مكررة
+  وسلوكًا مربكًا:</p>
+
+  <table>
+    <thead>
+      <tr><th>المشكلة</th><th>لماذا هي مشكلة</th><th>الحل</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@ViewData["Title"]</code> قبل <code>@model</code></td>
+        <td>يفضل أن يبدأ ملف Razor بـ <code>@model</code> أولًا.</td>
+        <td>ضع <code>@model SessionMVC850.Models.Employee</code> في السطر الأول.</td>
+      </tr>
+      <tr>
+        <td><code>ViewData["Title"]</code> مكرر</td>
+        <td>زائد ومربك.</td>
+        <td>احتفظ بكتلة <code>@{
+    ViewData["Title"] = "Edit Employee";
+}</code> واحدة فقط.</td>
+      </tr>
+      <tr>
+        <td>خمسة عناصر تحكم كلها باسم <code>Name</code> / <code>Id="Name"</code></td>
+        <td><code>EditorFor</code> و <code>LabelFor</code> وتسمية <code>asp-for</code> و
+        <code>TextBoxFor</code> و <code>TextBox("Name")</code> تُعرض كلها معًا. تكرار
+        <code>id</code> غير صالح والقيمة المرسلة غير متوقعة.</td>
+        <td>اختر طريقة واحدة واحتفظ بحقل واحد لكل خاصية.</td>
+      </tr>
+      <tr>
+        <td><code>Html.TextBox("Name", null, placeholder = "Enter age")</code></td>
+        <td>الاسم <code>Name</code> لكن placeholder يقول age؛ كما يكرر حقل الاسم.</td>
+        <td>استخدم <code>Html.TextBox("age", Model.age, ...)</code> أو الأفضل
+        <code>&lt;input asp-for="age" ... /&gt;</code>.</td>
+      </tr>
+      <tr>
+        <td><code>action="/Employee/SaveEdit"</code> ثابت</td>
+        <td>يتعطل إذا تغيّر التوجيه أو path base.</td>
+        <td>استخدم <code>asp-action="SaveEdit" asp-controller="Employee"</code> أو
+        <code>Html.BeginForm</code>.</td>
+      </tr>
+      <tr>
+        <td>لا توجد رسائل تحقق</td>
+        <td>لا يحصل المستخدم على تغذية راجعة عند وجود خطأ.</td>
+        <td>أضف <code>&lt;span asp-validation-for="Name"&gt;&lt;/span&gt;</code> أو
+        <code>@Html.ValidationMessageFor(...)</code>.</td>
+      </tr>
+      <tr>
+        <td>منطق <code>selected</code> يدوي للقائمة</td>
+        <td>يعمل، لكنه متكرر ويسهل نسيانه.</td>
+        <td>استخدم <code>&lt;select asp-for="DeptId" asp-items="..."&gt;</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2 id="choose">7) أي نوع تختار؟</h2>
+
+  <div class="box tip">
+    <b>التوصية</b>
+    <ul>
+      <li><strong>تعلّم بـ HTML العادي أولًا</strong> — يعلّمك Model Binding وخاصية
+          <code>name</code>، وهما أساس كل شيء آخر.</li>
+      <li><strong>استخدم مساعدات الوسوم للنماذج الحقيقية</strong> — <code>asp-for</code> و
+          <code>asp-items</code> و <code>asp-action</code> و <code>asp-controller</code>
+          تمنحك الأمان و HTML نظيفًا.</li>
+      <li><strong>استخدم المساعدات المقيّدة بالنوع</strong> عندما تحتاج دالة مساعدة أو قالب
+          محرر مخصص أو كودًا أسهل توليدًا ديناميكيًا.</li>
+      <li><strong>استخدم المساعدات غير المقيّدة</strong> فقط عندما يكون اسم الخاصية
+          ديناميكيًا حقًا؛ وإلا فهي الخيار الأضعف.</li>
+      <li><strong>استخدم HTML العادي</strong> للمحتوى الثابت أو عندما تحتاج ترميزًا دقيقًا
+          لا يستطيع أي مساعد إنتاجه.</li>
+    </ul>
+  </div>
+
+  <p>لتحويل صفحة المشروع إلى النسخة الموصى بها، استبدل محتوى
+  <code>Views/Employee/Edit.cshtml</code> بمثال مساعدات الوسوم من القسم 4. لا يحتاج إجراء
+  المتحكم ودالة <code>EmployeeBL.Update</code> إلى أي تغيير: ما زالا يستقبلان نفس كائن
+  <code>Employee</code>.</p>
+
+  <a class="lang" href="edit-employee-form-en.html">اقرأ هذا الدليل بالإنجليزية ←</a>
+  <a class="lang" href="edit-employee-ar.html">دليل التعديل خطوة بخطوة</a>
+
+</div>
+</body>
+</html>

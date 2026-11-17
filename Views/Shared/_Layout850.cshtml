@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div style="background-color: pink; padding: 10px; text-align: center;">
+        Header
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+
+    <div style="background-color:aqua; padding: 10px; text-align: center;">
+        Footer
+
+        @RenderSection("Scripts", required: false)
+    </div>
+</body>
+</html>

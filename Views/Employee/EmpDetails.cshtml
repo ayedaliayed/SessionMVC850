@@ -1,0 +1,16 @@
+﻿@using SessionMVC850.ModelView
+@model EmopyeeViewMode
+
+<h2>Id : @Model.Id</h2>
+<h1>Name : @Model.Nameeeeeeee</h1>
+<h1>Age : @Model.age</h1>
+<h1>Deparment Name : @Model.DeptName</h1>
+
+<h3>@Model.companyaddress</h3>
+<h4> @Model.grade</h4>
+
+@foreach (var b in Model.branchs)
+{
+    <h4>@b</h4>
+}
+
