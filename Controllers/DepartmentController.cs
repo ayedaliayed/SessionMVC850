@@ -35,7 +35,7 @@ namespace SessionMVC850.Controllers
             return View(department);
         }
 
-        [HttpPost]
+     
         public IActionResult SaveEdit(Department department)
         {
             if (department.Name != null)
